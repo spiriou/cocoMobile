@@ -1,0 +1,75 @@
+syntax = "proto2";
+
+package tutorial;
+
+option java_package = "com.example.android.basicnetworking";
+option java_outer_classname = "cocoProtobuf";
+
+message CellInfoLte {
+  // CellInfoLte
+  required bool registered = 1;
+  // mTimeStampType=oem_ril
+  required int64 timestamp = 3;
+
+  // CellIdentityLte
+  required int32 mcc    = 4;
+  required int32 mnc    = 5;
+  required int32 cid    = 6;
+  required int32 pci    = 7;
+  required int32 tac    = 8;
+  required int32 earfcn = 9;
+
+  // CellSignalStrengthLte
+  required int32 ss    = 10;
+  required int32 rsrp  = 11;
+  required int32 rsrq  = 12;
+  required int32 rssnr = 13;
+  required int32 cqi   = 14;
+  required int32 ta    = 15;
+  required int32 level = 16;
+}
+
+// Network measurements
+message NetChunk {
+  message CellInfo {
+    oneof cellinfo_oneof {
+      CellInfoLte lte = 1;
+    }
+  }
+
+  required int32 network_type = 1;
+  repeated CellInfo cells = 2;
+
+  required int64 rx_bytes = 3; // TODO only send byte diffs, not total
+  required int64 tx_bytes = 4; // TODO only send byte diffs, not total
+  required int64 rx_packets = 5; // TODO only send packet diffs, not total
+  required int64 tx_packets = 6; // TODO only send packet diffs, not total
+}
+
+// Localisation measurements
+message GnssChunk {
+  required int64 timestamp  = 1;
+  required double latitude  = 2;
+  required double longitude = 3;
+  optional double altitude  = 4;
+  optional float accuracy   = 5;
+  optional float speed      = 6;
+  optional float bearing    = 7;
+}
+
+// Latency measurements
+message LatencyChunk {
+  required int32 id = 1;
+  required int64 latency = 2;
+}
+
+message CocoFrame {
+  // Frame metadata
+  required int32 id = 1;
+  required int64 tx_timestamp = 2;
+
+  // Frame payload
+  repeated NetChunk net         = 3;
+  repeated GnssChunk gnss       = 4;
+  repeated LatencyChunk latency = 5;
+}

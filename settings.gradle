@@ -1,0 +1,2 @@
+include ':cocoProtobuf'
+include 'Application'
